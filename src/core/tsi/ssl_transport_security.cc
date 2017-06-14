@@ -1358,8 +1358,10 @@ tsi_result tsi_create_ssl_client_handshaker_factory(
   *factory = NULL;
   if (pem_root_certs == NULL) return TSI_INVALID_ARGUMENT;
 
-  ssl_context = SSL_CTX_new(TLSv1_2_method());
-  if (ssl_context == NULL) {
+  ssl_context = SSL_CTX_new(TLS_method());
+  if (ssl_context == NULL ||
+      !SSL_CTX_set_min_proto_version(ssl_context, TLS1_2_VERSION) ||
+      !SSL_CTX_set_max_proto_version(ssl_context, TLS1_2_VERSION)){
     gpr_log(GPR_ERROR, "Could not create ssl context.");
     return TSI_INVALID_ARGUMENT;
   }
@@ -1476,8 +1478,10 @@ tsi_result tsi_create_ssl_server_handshaker_factory_ex(
 
   for (i = 0; i < num_key_cert_pairs; i++) {
     do {
-      impl->ssl_contexts[i] = SSL_CTX_new(TLSv1_2_method());
-      if (impl->ssl_contexts[i] == NULL) {
+      impl->ssl_contexts[i] = SSL_CTX_new(TLS_method());
+      if (impl->ssl_contexts[i] == NULL ||
+          !SSL_CTX_set_min_proto_version(impl->ssl_contexts[i], TLS1_2_VERSION) ||
+          !SSL_CTX_set_max_proto_version(impl->ssl_contexts[i], TLS1_2_VERSION)) {
         gpr_log(GPR_ERROR, "Could not create ssl context.");
         result = TSI_OUT_OF_RESOURCES;
         break;
