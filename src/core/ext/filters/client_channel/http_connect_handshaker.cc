@@ -330,8 +330,7 @@ static const grpc_handshaker_vtable http_connect_handshaker_vtable = {
 
 static grpc_handshaker* grpc_http_connect_handshaker_create() {
   http_connect_handshaker* handshaker =
-      static_cast<http_connect_handshaker*>(gpr_malloc(sizeof(*handshaker)));
-  memset(handshaker, 0, sizeof(*handshaker));
+      static_cast<http_connect_handshaker*>(gpr_zalloc(sizeof(*handshaker)));
   grpc_handshaker_init(&http_connect_handshaker_vtable, &handshaker->base);
   gpr_mu_init(&handshaker->mu);
   gpr_ref_init(&handshaker->refcount, 1);
